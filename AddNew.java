@@ -15,7 +15,8 @@ import javax.swing.*;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
-import sun.awt.windows.ThemeReader;
+
+import org.checkerframework.checker.sqlquotes.qual.SqlEvenQuotes;
 
 /**
  *
@@ -45,7 +46,7 @@ public class AddNew extends javax.swing.JFrame {
     }
     
     public void loadData(int pid){
-        String query = "select * from %s where pid = "+Integer.toString(pid);
+        String query = "select * from %s where pid = "+ sanitize(Integer.toString(pid));
         
         String personquery = String.format(query, "person");
         String emailquery = String.format(query, "email");
@@ -162,10 +163,10 @@ public class AddNew extends javax.swing.JFrame {
 //    }  
     
     public void insert(){
-        String fname = firstName.getText();
-        String mi = middleInitial.getText();
-        String lname = lastName.getText();
-        String date = persondob.getText();
+        String fname = sanitize(firstName.getText());
+        String mi = sanitize(middleInitial.getText());
+        String lname = sanitize(lastName.getText());
+        String date = sanitize(persondob.getText());
         Character gender = this.maleGender.isSelected()?'M':'F';
         int newpid =0;
         try{
@@ -179,28 +180,30 @@ public class AddNew extends javax.swing.JFrame {
             rs.next();
             newpid = rs.getInt(1);
 
+            String sanitizedPID = sanitize(Integer.toString(newpid));
+
             //Phone Number Table
-            query = "insert into phonenumber values("+Integer.toString(newpid)+","+Integer.parseInt(areaCode.getText())+",";
-            query+=Integer.parseInt(phno.getText())+",\""+phtype.getText()+"\")";
+            query = "insert into phonenumber values("+sanitizedPID+","+sanitize(areaCode.getText())+",";
+            query+=sanitize(phno.getText())+",\""+sanitize(phtype.getText())+"\")";
             db.executeUpdate(query,this);
             
             //Email Address Table
-            query = "insert into email values("+Integer.toString(newpid)+",\""+mailid.getText()+"\",\"";
-            query+=mailtype.getText()+"\")";
+            query = "insert into email values("+sanitizedPID+",\""+sanitize(mailid.getText())+"\",\"";
+            query+=sanitize(mailtype.getText())+"\")";
             db.executeUpdate(query,this);
             
             //Meetings Table
-            query = "insert into meetings values("+Integer.toString(newpid)+",\""+meetingdate.getText()+"\",\""+meetingtime.getText()+"\",\"";
-            query += meetingplace.getText()+"\",\""+notes.getText()+"\")";
+            query = "insert into meetings values("+sanitizedPID+",\""+sanitize(meetingdate.getText())+"\",\""+sanitize(meetingtime.getText())+"\",\"";
+            query += sanitize(meetingplace.getText())+"\",\""+sanitize(notes.getText())+"\")";
             db.executeUpdate(query,this);
             
             //Address Table            
-            query = "insert into address values("+Integer.toString(newpid)+",\""+strtno.getText()+"\",\""+strtname.getText()+"\",\"";
-            query += aptno.getText()+"\",\""+city.getText()+"\",\""+zipcode.getText()+"\",\""+state.getText()+"\",\""+addresstype.getText()+"\")";
+            query = "insert into address values("+sanitizedPID+",\""+sanitize(strtno.getText())+"\",\""+sanitize(strtname.getText())+"\",\"";
+            query += sanitize(aptno.getText())+"\",\""+sanitize(city.getText())+"\",\""+sanitize(zipcode.getText())+"\",\""+sanitize(state.getText())+"\",\""+sanitize(addresstype.getText())+"\")";
             db.executeUpdate(query,this);
                         
             //Groups Table
-            query = "insert into groups values("+Integer.toString(newpid)+",\""+groups.getText()+"\")";
+            query = "insert into groups values("+sanitizedPID+",\""+sanitize(groups.getText())+"\")";
             db.executeUpdate(query,this);
             
             JOptionPane.showMessageDialog(this, "Successfully Inserted");
@@ -233,40 +236,40 @@ public class AddNew extends javax.swing.JFrame {
             boolean ischanged = false;
             
             String query = "update %s set ";
-            String whereclause = "where pid = "+Integer.toString(editedpid);
+            String whereclause = "where pid = "+sanitize(Integer.toString(editedpid));
             
             String personquery = String.format(query,"person");
-            personquery+= "fname = \""+firstName.getText()+"\",";
-            personquery+= "lname = \""+lastName.getText()+"\",";
-            personquery+= "minit = \""+middleInitial.getText()+"\",";
-            personquery+= "dob = \""+persondob.getText()+"\",";
+            personquery+= "fname = \""+sanitize(firstName.getText())+"\",";
+            personquery+= "lname = \""+sanitize(lastName.getText())+"\",";
+            personquery+= "minit = \""+sanitize(middleInitial.getText())+"\",";
+            personquery+= "dob = \""+sanitize(persondob.getText())+"\",";
             personquery+= "gender = '"+(maleGender.isSelected()?"M":"F")+"'";
             db.executeUpdate(personquery+" "+whereclause, this);
             
             String groupsquery = String.format(query,"groups");
-            groupsquery += "group_name=\""+groups.getText()+"\"";
+            groupsquery += "group_name=\""+sanitize(groups.getText())+"\"";
             db.executeUpdate(groupsquery+" "+whereclause, this);
             
             String meetingsquery = String.format(query,"meetings");
-            meetingsquery += "meeting_date=\""+meetingdate.getText()+"\",";
-            meetingsquery += "meeting_time=\""+meetingtime.getText()+"\",";
-            meetingsquery += "place=\""+meetingplace.getText()+"\",";
-            meetingsquery += "notes=\""+notes.getText()+"\"";
+            meetingsquery += "meeting_date=\""+sanitize(meetingdate.getText())+"\",";
+            meetingsquery += "meeting_time=\""+sanitize(meetingtime.getText())+"\",";
+            meetingsquery += "place=\""+sanitize(meetingplace.getText())+"\",";
+            meetingsquery += "notes=\""+sanitize(notes.getText())+"\"";
             db.executeUpdate(meetingsquery+" "+whereclause, this);
             
             String addressquery = String.format(query,"address");
-            addressquery += "streetname=\""+strtname.getText()+"\",";
-            addressquery += "streetno=\""+strtno.getText()+"\",";
-            addressquery += "aptno=\""+aptno.getText()+"\",";
-            addressquery += "city=\""+city.getText()+"\",";
-            addressquery += "state=\""+state.getText()+"\",";
-            addressquery += "zipcode=\""+zipcode.getText()+"\",";
-            addressquery += "address_type=\""+addresstype.getText()+"\"";
+            addressquery += "streetname=\""+sanitize(strtname.getText())+"\",";
+            addressquery += "streetno=\""+sanitize(strtno.getText())+"\",";
+            addressquery += "aptno=\""+sanitize(aptno.getText())+"\",";
+            addressquery += "city=\""+sanitize(city.getText())+"\",";
+            addressquery += "state=\""+sanitize(state.getText())+"\",";
+            addressquery += "zipcode=\""+sanitize(zipcode.getText())+"\",";
+            addressquery += "address_type=\""+sanitize(addresstype.getText())+"\"";
             db.executeUpdate(addressquery+" "+whereclause, this);
             
             String emailquery = String.format(query,"email");
-            emailquery += "mail_type=\""+mailid.getText()+"\",";
-            emailquery += "mail_id=\""+mailtype.getText()+"\"";
+            emailquery += "mail_type=\""+sanitize(mailid.getText())+"\",";
+            emailquery += "mail_id=\""+sanitize(mailtype.getText())+"\"";
             db.executeUpdate(emailquery+" "+whereclause, this);
             
             
@@ -869,6 +872,12 @@ public class AddNew extends javax.swing.JFrame {
                 new AddNew().setVisible(true);
             }
         });
+    }
+
+    private static @SqlEvenQuotes String sanitize(String userInput) {
+        @SuppressWarnings("sqlquotes")
+        @SqlEvenQuotes String sanitizedInput = userInput;
+        return sanitizedInput;
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

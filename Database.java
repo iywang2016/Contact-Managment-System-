@@ -12,6 +12,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import javax.swing.JOptionPane;
+import org.checkerframework.checker.sqlquerytainting.qual.SqlEvenQuotes;
 
 /**
  *
@@ -19,7 +20,7 @@ import javax.swing.JOptionPane;
  */
 public class Database {
     
-    ResultSet executeQuery(String query, Component obj)
+    ResultSet executeQuery(@SqlEvenQuotes String query, Component obj)
     {
         try{
             Class.forName("com.mysql.jdbc.Driver");
@@ -35,7 +36,7 @@ public class Database {
         }
     }
 
-    int executeUpdate(String query, Component obj)
+    int executeUpdate(@SqlEvenQuotes String query, Component obj)
     {
         try{
             Class.forName("com.mysql.jdbc.Driver");

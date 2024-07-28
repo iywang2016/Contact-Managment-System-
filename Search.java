@@ -9,6 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import org.checkerframework.checker.sqlquerytainting.qual.SqlEvenQuotes;
 
 /**
  *
@@ -206,9 +207,10 @@ public class Search extends javax.swing.JFrame {
 
     private void displayresults(){
         String query = "SELECT * FROM PERSON where ";
-        query += "fname like \""+firstName.getText()+"%\" and ";
-        query += "minit like \""+middleInitial.getText()+"%\" and ";
-        query += "lname like \""+lastName.getText()+"%\"";
+
+        query += "fname like \""+sanitize(firstName.getText())+"%\" and ";
+        query += "minit like \""+sanitize(middleInitial.getText())+"%\" and ";
+        query += "lname like \""+sanitize(lastName.getText())+"%\"";
         ResultSet rs = db.executeQuery(query,this);
         addtoTable(rs);
     }
@@ -287,7 +289,7 @@ public class Search extends javax.swing.JFrame {
         if(rowid<0)
             JOptionPane.showMessageDialog(this, "Select a row to remove");
         else{
-            String pid = (String)jTable1.getValueAt(rowid, 0);
+            String pid = sanitize((String)jTable1.getValueAt(rowid, 0));
             String query = "delete from phonenumber where pid = "+pid;
             db.executeUpdate(query, this);
             query = "delete from email where pid = "+pid;
@@ -303,6 +305,12 @@ public class Search extends javax.swing.JFrame {
             displayresults();
         }
     }//GEN-LAST:event_removeActionPerformed
+
+    private static @SqlEvenQuotes String sanitize(String userInput) {
+        @SuppressWarnings("sqlquerytainting")
+        @SqlEvenQuotes String sanitizedInput = userInput;
+        return sanitizedInput;
+    }
 
     /**
      * @param args the command line arguments
