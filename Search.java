@@ -9,7 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
-import org.checkerframework.checker.sqlquerytainting.qual.SqlEvenQuotes;
+import org.checkerframework.checker.sqlquotes.qual.SqlEvenQuotes;
 
 /**
  *

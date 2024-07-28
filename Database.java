@@ -12,7 +12,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import javax.swing.JOptionPane;
-import org.checkerframework.checker.sqlquerytainting.qual.SqlEvenQuotes;
+import org.checkerframework.checker.sqlquotes.qual.SqlEvenQuotes;
 
 /**
  *
