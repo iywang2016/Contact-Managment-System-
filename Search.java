@@ -307,7 +307,7 @@ public class Search extends javax.swing.JFrame {
     }//GEN-LAST:event_removeActionPerformed
 
     private static @SqlEvenQuotes String sanitize(String userInput) {
-        @SuppressWarnings("sqlquerytainting")
+        @SuppressWarnings("sqlquotes")
         @SqlEvenQuotes String sanitizedInput = userInput;
         return sanitizedInput;
     }

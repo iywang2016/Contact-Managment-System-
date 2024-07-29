@@ -47,13 +47,19 @@ public class AddNew extends javax.swing.JFrame {
     
     public void loadData(int pid){
         String query = "select * from %s where pid = "+ sanitize(Integer.toString(pid));
-        
-        String personquery = String.format(query, "person");
-        String emailquery = String.format(query, "email");
-        String phonequery = String.format(query, "phonenumber");
-        String groupsquery = String.format(query, "groups");
-        String meetingsquery = String.format(query, "meetings");
-        String addressquery = String.format(query,"address");
+
+        @SuppressWarnings("sqlquotes")
+        @SqlEvenQuotes String personquery = String.format(query, "person");
+        @SuppressWarnings("sqlquotes")
+        @SqlEvenQuotes String emailquery = String.format(query, "email");
+        @SuppressWarnings("sqlquotes")
+        @SqlEvenQuotes String phonequery = String.format(query, "phonenumber");
+        @SuppressWarnings("sqlquotes")
+        @SqlEvenQuotes String groupsquery = String.format(query, "groups");
+        @SuppressWarnings("sqlquotes")
+        @SqlEvenQuotes String meetingsquery = String.format(query, "meetings");
+        @SuppressWarnings("sqlquotes")
+        @SqlEvenQuotes String addressquery = String.format(query,"address");
         
         boolean isadded = false;
         try{
@@ -172,8 +178,9 @@ public class AddNew extends javax.swing.JFrame {
         try{
             //Person Table
             String query = "INSERT INTO PERSON(dob,gender,fname,minit,lname) VALUES(\"%s\",'%c',\"%s\",\"%s\",\"%s\")";
-            query = String.format(query, date, gender,fname,mi,lname);
-            db.executeUpdate(query,this);
+            @SuppressWarnings("sqlquotes")
+            @SqlEvenQuotes String formattedQuery = String.format(query, date, gender,fname,mi,lname);
+            db.executeUpdate(formattedQuery,this);
 
             query = "SELECT pid FROM person order by pid desc limit 1";
             ResultSet rs = db.executeQuery(query,this);
@@ -238,26 +245,30 @@ public class AddNew extends javax.swing.JFrame {
             String query = "update %s set ";
             String whereclause = "where pid = "+sanitize(Integer.toString(editedpid));
             
-            String personquery = String.format(query,"person");
+            @SuppressWarnings("sqlquotes")
+            @SqlEvenQuotes String personquery = String.format(query,"person");
             personquery+= "fname = \""+sanitize(firstName.getText())+"\",";
             personquery+= "lname = \""+sanitize(lastName.getText())+"\",";
             personquery+= "minit = \""+sanitize(middleInitial.getText())+"\",";
             personquery+= "dob = \""+sanitize(persondob.getText())+"\",";
             personquery+= "gender = '"+(maleGender.isSelected()?"M":"F")+"'";
             db.executeUpdate(personquery+" "+whereclause, this);
-            
-            String groupsquery = String.format(query,"groups");
+
+            @SuppressWarnings("sqlquotes")
+            @SqlEvenQuotes String groupsquery = String.format(query,"groups");
             groupsquery += "group_name=\""+sanitize(groups.getText())+"\"";
             db.executeUpdate(groupsquery+" "+whereclause, this);
-            
-            String meetingsquery = String.format(query,"meetings");
+
+            @SuppressWarnings("sqlquotes")
+            @SqlEvenQuotes String meetingsquery = String.format(query,"meetings");
             meetingsquery += "meeting_date=\""+sanitize(meetingdate.getText())+"\",";
             meetingsquery += "meeting_time=\""+sanitize(meetingtime.getText())+"\",";
             meetingsquery += "place=\""+sanitize(meetingplace.getText())+"\",";
             meetingsquery += "notes=\""+sanitize(notes.getText())+"\"";
             db.executeUpdate(meetingsquery+" "+whereclause, this);
-            
-            String addressquery = String.format(query,"address");
+
+            @SuppressWarnings("sqlquotes")
+            @SqlEvenQuotes String addressquery = String.format(query,"address");
             addressquery += "streetname=\""+sanitize(strtname.getText())+"\",";
             addressquery += "streetno=\""+sanitize(strtno.getText())+"\",";
             addressquery += "aptno=\""+sanitize(aptno.getText())+"\",";
@@ -266,8 +277,9 @@ public class AddNew extends javax.swing.JFrame {
             addressquery += "zipcode=\""+sanitize(zipcode.getText())+"\",";
             addressquery += "address_type=\""+sanitize(addresstype.getText())+"\"";
             db.executeUpdate(addressquery+" "+whereclause, this);
-            
-            String emailquery = String.format(query,"email");
+
+            @SuppressWarnings("sqlquotes")
+            @SqlEvenQuotes String emailquery = String.format(query,"email");
             emailquery += "mail_type=\""+sanitize(mailid.getText())+"\",";
             emailquery += "mail_id=\""+sanitize(mailtype.getText())+"\"";
             db.executeUpdate(emailquery+" "+whereclause, this);
